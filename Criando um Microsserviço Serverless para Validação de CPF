@@ -1,0 +1,78 @@
+Passo 1: Criar o Recurso Azure Function App
+1.	Acesse o portal do Azure.
+2.	No menu lateral esquerdo, clique em “Create a resource” e procure por “Function App”.
+3.	Clique em “Create” e preencha os seguintes detalhes:
+o	Subscription: Selecione sua assinatura do Azure.
+o	Resource Group: Crie um novo grupo de recursos ou selecione um existente.
+o	Function App name: Escolha um nome único para sua Function App.
+o	Publish: Selecione “Code”.
+o	Runtime stack: Selecione “Python” (ou outra linguagem de sua preferência).
+o	Version: Selecione a versão do Python que deseja utilizar (por exemplo, 3.9).
+o	Region: Selecione a região mais próxima de você.
+4.	Clique em “Next: Hosting” e configure o armazenamento:
+o	Storage Account: Crie uma nova conta de armazenamento ou selecione uma existente.
+5.	Clique em “Next: Monitoring” e desative o Application Insights se não for necessário.
+6.	Clique em “Review + create” e, em seguida, “Create” para finalizar a criação do recurso.
+Passo 2: Configurar o Projeto Azure Functions Localmente
+1.	Instalar as Ferramentas Necessárias:
+o	Azure CLI: Instalação da Azure CLI
+o	Func Core Tools: Instalação do Azure Functions Core Tools
+2.	Criar um Novo Projeto de Azure Functions:
+o	Abra o terminal e execute os seguintes comandos:
+o	func init serveless-cpf-validation --python
+o	cd serveless-cpf-validation
+o	func new --name ValidateCPF --template "HTTP trigger" --authlevel "function"
+Passo 3: Adicionar o Código da Função para Validação de CPF
+1.	No arquivo ValidateCPF/__init__.py, adicione o seguinte código:
+Python
+import logging
+import azure.functions as func
+import re
+
+def validar_cpf(cpf: str) -> bool:
+    # Remove caracteres não numéricos
+    cpf = re.sub(r'\D', '', cpf)
+    # Verifica se tem 11 dígitos
+    if len(cpf) != 11:
+        return False
+    # Verifica se todos os dígitos são iguais (CPFs inválidos comuns)
+    if cpf == cpf[0] * 11:
+        return False
+    # Calcula o primeiro dígito verificador
+    soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
+    primeiro_digito_verificador = 11 - (soma % 11)
+    if primeiro_digito_verificador >= 10:
+        primeiro_digito_verificador = 0
+    # Calcula o segundo dígito verificador
+    soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
+    segundo_digito_verificador = 11 - (soma % 11)
+    if segundo_digito_verificador >= 10:
+        segundo_digito_verificador = 0
+    # Verifica se os dígitos verificadores são válidos
+    return int(cpf[9]) == primeiro_digito_verificador and int(cpf[10]) == segundo_digito_verificador
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Recebendo requisição para validação de CPF.')
+    cpf = req.params.get('cpf')
+    if not cpf:
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            pass
+        else:
+            cpf = req_body.get('cpf')
+    if cpf and validar_cpf(cpf):
+        return func.HttpResponse(f"CPF {cpf} é válido.")
+    else:
+        return func.HttpResponse(f"CPF {cpf} é inválido.", status_code=400)
+Código gerado por IA. Examine e use com cuidado. Mais informações em perguntas frequentes.
+Passo 4: Publicar o Projeto no Azure
+1.	Faça login no Azure:
+2.	az login
+3.	Implantar a Function App:
+4.	func azure functionapp publish <nome-da-sua-function-app>
+Passo 5: Testar a Função
+1.	Obtenha a URL da sua Function App no portal do Azure.
+2.	Envie uma requisição HTTP para testar a validação de CPF:
+curl -X POST <URL-da-sua-function-app>/api/ValidateCPF -H "Content-Type: application/json" -d '{"cpf": "12345678909"}'
+
