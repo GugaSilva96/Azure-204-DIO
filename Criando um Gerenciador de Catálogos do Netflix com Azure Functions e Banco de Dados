@@ -1,0 +1,111 @@
+Passo a Passo: Criando um Gerenciador de Catálogos do Netflix com Azure Functions e Banco de Dados
+
+1. Configurar o Ambiente
+
+Antes de iniciar, instale as seguintes ferramentas:
+
+Azure CLI: Execute o comando az login para autenticar.
+
+Azure Functions Core Tools: Instale utilizando npm install -g azure-functions-core-tools.
+
+Node.js ou Python: Escolha a linguagem desejada para desenvolver a API.
+
+2. Criar um Banco de Dados no Azure Cosmos DB
+
+Acesse o Portal do Azure e selecione "Criar um recurso".
+
+Escolha "Azure Cosmos DB" e selecione "API para NoSQL".
+
+Defina o nome do banco de dados como NetflixCatalogDB.
+
+Selecione um grupo de recursos NetflixCatalogRG.
+
+Configure o modo de escalabilidade para "Ajustável".
+
+Crie um container chamado MoviesCatalog.
+
+3. Criar a API com Azure Functions
+
+No Portal do Azure, vá para "Criar um recurso" e selecione "Function App".
+
+Defina:
+
+Nome da aplicação: NetflixCatalogAPI.
+
+Pilha de runtime: Node.js ou Python.
+
+Plano de hospedagem: Consumo (serverless).
+
+Repositório de código: Integrado ao GitHub.
+
+4. Criar Endpoints da API
+
+Criar um endpoint para adicionar um filme
+
+Criar um novo projeto: func init NetflixCatalog --worker-runtime node.
+
+Criar uma nova function HTTP: func new --name AddMovie --template "HttpTrigger" --authlevel "anonymous".
+
+Editar index.js para salvar dados no Cosmos DB:
+
+Importar CosmosClient do pacote @azure/cosmos.
+
+Definir as credenciais do Cosmos DB.
+
+Criar uma conexão com o banco de dados NetflixCatalogDB e o container MoviesCatalog.
+
+Criar um novo item no banco de dados com os campos title, genre e year.
+
+Retornar a resposta com status 201 e os dados do filme cadastrado.
+
+Criar um endpoint para listar os filmes
+
+Criar uma nova function HTTP: func new --name GetMovies --template "HttpTrigger" --authlevel "anonymous".
+
+Editar index.js para buscar filmes no Cosmos DB:
+
+Criar uma conexão com o banco de dados NetflixCatalogDB e o container MoviesCatalog.
+
+Buscar todos os itens armazenados no container.
+
+Retornar a resposta com status 200 e os dados dos filmes.
+
+5. Configurar as Variáveis de Ambiente
+
+No Portal do Azure, vá até "Configurações" > "Configurações do Aplicativo".
+
+Adicione as seguintes variáveis de ambiente:
+
+COSMOS_DB_URI: URL do Cosmos DB.
+
+COSMOS_DB_KEY: Chave de acesso ao banco.
+
+6. Fazer o Deploy
+
+Faça login no Azure.
+
+Publique a Function App utilizando o comando func azure functionapp publish NetflixCatalogAPI.
+
+Obtenha a URL da API no portal do Azure.
+
+7. Testar a API
+
+Adicionar um filme
+
+Fazer uma requisição HTTP POST para https://NetflixCatalogAPI.azurewebsites.net/api/AddMovie.
+
+Definir o cabeçalho Content-Type: application/json.
+
+Enviar o corpo JSON: {"title": "Inception", "genre": "Sci-Fi", "year": 2010}.
+
+Listar filmes
+
+Fazer uma requisição HTTP GET para https://NetflixCatalogAPI.azurewebsites.net/api/GetMovies.
+
+8. Melhorias Finais
+
+Adicionar autenticação com Azure AD ou API Keys.
+
+Monitorar logs com Azure Application Insights.
+
+Configurar um domínio personalizado e ativar HTTPS.
