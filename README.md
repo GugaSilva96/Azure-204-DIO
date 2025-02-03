@@ -1,0 +1,1 @@
+Devido à impossibilidade de abrir uma conta no Azure por não possuir um cartão de crédito, estou postando a resolução dos exercícios estruturada em passo a passo em um arquivo de texto em um repositório dedicado no GitHub. Dessa forma, todos podem acessar e seguir as instruções detalhadas para implementar a solução.
