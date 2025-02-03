@@ -1,0 +1,58 @@
+Passo 1: Preparar o Ambiente Local
+Antes de começar o deploy, é essencial garantir que sua API esteja pronta para ser publicada.
+
+Desenvolva ou tenha a API pronta em um ambiente local, usando frameworks como Node.js, .NET, Python, ou qualquer outro de sua escolha.
+Teste localmente usando ferramentas como Postman ou curl.
+Crie um repositório no GitHub ou Azure DevOps para armazenar o código.
+Passo 2: Criar um Recurso no Azure
+Agora, é necessário provisionar a infraestrutura na nuvem.
+
+Acesse o portal do Azure (portal.azure.com).
+Vá para "Criar um recurso" e selecione "App Service".
+Preencha as informações:
+Nome do aplicativo: Um nome único.
+Grupo de recursos: Escolha um existente ou crie um novo.
+Runtime Stack: Escolha de acordo com a tecnologia da API (Node.js, .NET, Python, etc.).
+Plano de Serviço: Escolha um plano gratuito ou pago conforme sua necessidade.
+Passo 3: Configurar a Publicação
+Agora, precisamos definir a forma de deploy.
+
+Acesse a API recém-criada no App Service.
+No menu lateral, vá para "Deployment Center".
+Escolha a origem do código:
+GitHub Actions: Ideal para CI/CD.
+Azure DevOps: Para quem usa pipelines do Azure.
+FTP/SFTP: Caso queira fazer um upload manual.
+Configure a autenticação necessária e conecte-se ao repositório.
+Passo 4: Configurar Variáveis de Ambiente
+Se a API precisar de variáveis de ambiente, configure-as no Azure:
+
+No App Service, vá para "Configurações > Configurações do Aplicativo".
+Adicione as variáveis (por exemplo, DATABASE_URL, API_KEY).
+Salve e reinicie o serviço.
+Passo 5: Fazer o Deploy da API
+Agora, podemos publicar a API.
+
+Se escolheu GitHub Actions ou Azure DevOps, o deploy será automático ao fazer um push no repositório.
+Para deploy manual:
+Instale o Azure CLI (az login para autenticar).
+Rode o comando:
+bash
+Copiar
+Editar
+az webapp up --name NomeDoApp --resource-group NomeDoGrupo --runtime "NODE|18-lts"
+Ou use o Visual Studio Code com a extensão do Azure.
+Passo 6: Testar a API no Azure
+Após o deploy:
+
+Vá até o App Service > URL do Aplicativo e copie o link.
+Teste com:
+curl https://seu-app.azurewebsites.net/api/endpoint
+Verifique os logs no "Diagnóstico e Solução de Problemas" do App Service.
+Passo 7: Configurar Escalabilidade e Segurança (Opcional)
+Para produção, recomenda-se:
+
+Configurar um banco de dados gerenciado (Azure SQL, CosmosDB, etc.).
+Adicionar um domínio personalizado e ativar HTTPS.
+Escalar o serviço (Aumentar instâncias ou habilitar autoscaling).
+Monitorar logs e métricas no Azure Application Insights.
